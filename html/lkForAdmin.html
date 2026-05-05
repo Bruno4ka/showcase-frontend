@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль — ИУЦТ</title>
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/entrance.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../styles/lkForAdmin.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-left">
+            <img src="../images/logo.png" alt="Логтип" class="header-logo">
+        </div>
+        <div class="header-right">
+            <img src="../images/profile.png" alt="Профиль" class="header-profile">
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="profile-container">
+            <h1 class="page-title-profile">ПРОФИЛЬ</h1>
+
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div>
+                        <h2 class="profile-name">Балакшина Валерия Максимовна</h2>
+                        <div>
+                            <span class="profile-login-label">Логин:</span>
+                            <span class="profile-email">balakshina.lera@gmail.com</span>
+                        </div>
+                    </div>
+                    <button class="edit-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Редактировать
+                    </button>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <button class="tab-button active" data-tab="projects">Список проектов</button>
+                <button class="tab-button" data-tab="groups">Группы студентов</button>
+                <button class="tab-button" data-tab="users">Список пользователей</button>
+            </div>
+
+            <div class="projects-filters controls-group active" id="controls-projects">
+                <div class="projects-filters-left">
+                    <div class="filter-wrapper">
+                        <button class="filter-btn" onclick="toggleDropdown('dropdown-type', this)">
+                            <span id="label-type">Тип проекта</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="dropdown" id="dropdown-type">
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-type', 'label-type', 'Исследовательский')">
+                                Исследовательский</div>
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-type', 'label-type', 'Практический')">Практический</div>
+                            <div class="dropdown-item" onclick="selectOption('dropdown-type', 'label-type', 'Учебный')">
+                                Учебный</div>
+                        </div>
+                    </div>
+
+                    <div class="filter-wrapper">
+                        <button class="filter-btn" onclick="toggleDropdown('dropdown-dept', this)">
+                            <span id="label-dept">Кафедра</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="dropdown" id="dropdown-dept">
+                            <div class="dropdown-item" onclick="selectOption('dropdown-dept', 'label-dept', 'УТБиИС')">
+                                УТБиИС</div>
+                            <div class="dropdown-item" onclick="selectOption('dropdown-dept', 'label-dept', 'ЛТСТ')">
+                                ЛТСТ</div>
+                            <div class="dropdown-item" onclick="selectOption('dropdown-dept', 'label-dept', 'УЭРиБТ')">
+                                УЭРиБТ</div>
+                            <div class="dropdown-item" onclick="selectOption('dropdown-dept', 'label-dept', 'ХиИЭ')">
+                                ХиИЭ</div>
+                        </div>
+                    </div>
+
+                    <div class="filter-wrapper">
+                        <button class="filter-btn" onclick="toggleDropdown('dropdown-team', this)">
+                            <span id="label-team">Команда</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="dropdown" id="dropdown-team">
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-team', 'label-team', 'Есть команда')">Есть команда</div>
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-team', 'label-team', 'Нет команды')">Нет команды</div>
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-team', 'label-team', 'Ищу участников')">Ищу участников
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-wrapper">
+                        <button class="filter-btn" onclick="toggleDropdown('dropdown-status', this)">
+                            <span id="label-status">Статус</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="dropdown" id="dropdown-status">
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-status', 'label-status', 'Свободно')">Свободно</div>
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-status', 'label-status', 'Завершён')">Завершён</div>
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-status', 'label-status', 'На верификации')">На
+                                верификации</div>
+                            <div class="dropdown-item"
+                                onclick="selectOption('dropdown-status', 'label-status', 'В работе')">В работе</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="projects-filters-center">
+                    <div class="projects-search">
+                        <input type="text" placeholder="Поиск по названию">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="projects-filters-right">
+                    <button class="action-button-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Создать заявку на проект
+                    </button>
+                </div>
+            </div>
+
+            <div class="groups-search-container controls-group" id="controls-groups">
+                <div class="groups-search">
+                    <input type="text" placeholder="Поиск по названию">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <button class="action-button-blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Создать группу
+                </button>
+            </div>
+
+            <div class="search-filters controls-group" id="controls-users">
+                <div class="search-input-wrapper"><input type="text" class="search-input" placeholder="Роль"><svg
+                        class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg></div>
+                <div class="search-input-wrapper"><input type="text" class="search-input" placeholder="ФИО"><svg
+                        class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg></div>
+                <div class="search-input-wrapper"><input type="text" class="search-input" placeholder="Логин"><svg
+                        class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg></div>
+                <div class="search-input-wrapper"><input type="text" class="search-input" placeholder="Группа"><svg
+                        class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg></div>
+            </div>
+
+            <div class="content-area">
+                <div class="tab-content active" id="tab-projects">
+                    <div class="projects-grid" id="projectsGrid"></div>
+                    <div class="empty-state" id="empty-projects">
+                        <div class="empty-text">ИСТОРИЯ ПУСТА</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-groups">
+                    <div class="groups-list" id="groupsList"></div>
+                    <div class="empty-state" id="empty-groups">
+                        <div class="empty-text">НЕТ АКТИВНЫХ ГРУПП</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-users">
+                    <div class="users-white-container">
+                        <!-- КНОПКА ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ -->
+                        <button class="action-button-dark" id="openModalBtn" style="margin-bottom: 20px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            Добавить
+                        </button>
+
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Роль</th>
+                                    <th>ФИО</th>
+                                    <th>Логин</th>
+                                    <th>Группа</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="empty-users">
+                        <div class="empty-text">НЕТ ПОЛЬЗОВАТЕЛЕЙ</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <img src="../images/значки рута.png" alt="логотипы">
+    </footer>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+            <h2 class="modal-title">ДОБАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯ</h2>
+            <form id="addUserForm">
+                <div class="modal-form-group">
+                    <label class="modal-label">Роль</label>
+                    <select class="modal-select" id="userRoleSelect">
+                        <option value="">Выберите роль</option>
+                        <option value="Администратор">Администратор</option>
+                        <option value="Преподаватель">Преподаватель</option>
+                        <option value="Студент">Студент</option>
+                        <option value="Пользователь">Пользователь</option>
+                    </select>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Логин:</label>
+                    <input type="email" class="modal-input" id="userLoginInput" required>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Пароль:</label>
+                    <input type="password" class="modal-input" id="userPasswordInput" required>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">ФИО:</label>
+                    <input type="text" class="modal-input" id="userFioInput" required>
+                </div>
+                <div style="text-align: right;"><button type="submit" class="btn-confirm">ПОДТВЕРДИТЬ</button></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const controlsGroups = document.querySelectorAll('.controls-group');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                controlsGroups.forEach(group => group.classList.remove('active'));
+
+                button.classList.add('active');
+                document.getElementById('tab-' + tabId).classList.add('active');
+                document.getElementById('controls-' + tabId).classList.add('active');
+            });
+        });
+
+        function toggleDropdown(dropdownId, btn) {
+            const dropdown = document.getElementById(dropdownId);
+            const isOpen = dropdown.classList.contains('show');
+
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+
+            if (!isOpen) {
+                dropdown.classList.add('show');
+                btn.classList.add('active');
+            }
+        }
+
+        function selectOption(dropdownId, labelId, value) {
+            document.getElementById(labelId).textContent = value;
+            document.getElementById(dropdownId).classList.remove('show');
+            const btn = document.querySelector(`button[onclick*="${dropdownId}"]`);
+            if (btn) btn.classList.remove('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.filter-wrapper')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            }
+        });
+
+        let usersData = [];
+        let groupsData = [];
+        let projectsData = [];
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            const container = document.querySelector('.users-white-container');
+            const empty = document.getElementById('empty-users');
+            tbody.innerHTML = '';
+
+            if (usersData.length === 0) {
+                if (container) container.style.display = 'none';
+                empty.classList.add('visible');
+            } else {
+                if (container) container.style.display = 'block';
+                empty.classList.remove('visible');
+                usersData.forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${u.role}</td><td>${u.fio}</td><td>${u.login}</td><td>${u.group || 'нет'}</td>`;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function renderGroups() {
+            const list = document.getElementById('groupsList');
+            const empty = document.getElementById('empty-groups');
+            list.innerHTML = '';
+
+            if (groupsData.length === 0) {
+                empty.classList.add('visible');
+            } else {
+                empty.classList.remove('visible');
+                groupsData.forEach((g, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'group-item';
+                    div.innerHTML = `
+                        <div class="group-name">Группа: ${g.name}</div>
+                        <div class="group-actions">
+                            <svg class="group-star ${g.isFavorite ? '' : 'inactive'}" data-idx="${i}" xmlns="http://www.w3.org/2000/svg" fill="${g.isFavorite ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                            <svg class="group-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                        </div>`;
+                    list.appendChild(div);
+                });
+
+                list.querySelectorAll('.group-star').forEach(star => {
+                    star.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(star.getAttribute('data-idx'));
+                        groupsData[idx].isFavorite = !groupsData[idx].isFavorite;
+                        renderGroups();
+                    });
+                });
+            }
+        }
+
+        function renderProjects() {
+            const grid = document.getElementById('projectsGrid');
+            const empty = document.getElementById('empty-projects');
+            grid.innerHTML = '';
+
+            if (projectsData.length === 0) {
+                empty.classList.add('visible');
+            } else {
+                empty.classList.remove('visible');
+                projectsData.forEach(p => {
+                    let statusClass = p.status === 'free' ? 'free' : (p.status === 'completed' ? 'completed' : 'verification');
+                    let statusText = p.status === 'free' ? 'свободно' : (p.status === 'completed' ? 'завершен' : 'НА ВЕРИФИКАЦИИ');
+                    let btnText = p.status === 'verification' ? 'Требует подтверждения' : 'Подробнее';
+
+                    const div = document.createElement('div');
+                    div.className = 'project-card';
+                    div.innerHTML = `
+                        <div class="project-title">${p.title}</div>
+                        <div class="project-status ${statusClass}">Статус: ${statusText}</div>
+                        <div class="project-info"><strong>Команда:</strong> ${p.team}</div>
+                        <div class="project-info"><strong>Кафедра:</strong> ${p.department}</div>
+                        <div class="project-goal"><strong>Цель:</strong> ${p.goal}</div>
+                        <button class="project-button">${btnText}</button>`;
+                    grid.appendChild(div);
+                });
+            }
+        }
+        
+        async function loadDataFromBackend() {
+            try {
+                const usersResponse = await fetch('/api/users');
+                usersData = await usersResponse.json();
+
+                const groupsResponse = await fetch('/api/groups');
+                groupsData = await groupsResponse.json();
+
+                const projectsResponse = await fetch('/api/projects');
+                projectsData = await projectsResponse.json();
+
+                renderUsers();
+                renderGroups();
+                renderProjects();
+
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('empty-users')?.classList.add('visible');
+                document.getElementById('empty-groups')?.classList.add('visible');
+                document.getElementById('empty-projects')?.classList.add('visible');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDataFromBackend);
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        const modal = document.getElementById('modalOverlay');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const addUserForm = document.getElementById('addUserForm');
+
+        openModalBtn.addEventListener('click', () => modal.classList.add('active'));
+        closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+        addUserForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newUser = {
+                role: document.getElementById('userRoleSelect').value,
+                fio: document.getElementById('userFioInput').value,
+                login: document.getElementById('userLoginInput').value,
+                group: 'нет'
+            };
+            usersData.push(newUser);
+            renderUsers();
+            modal.classList.remove('active');
+            addUserForm.reset();
+        });
+    </script>
+</body>
+
+</html>

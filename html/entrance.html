@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — ИУЦТ</title>
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/entrance.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-left">
+            <img src="../images/logo.png" alt="Логтип витрины проектов ИУЦТ" class="header-logo">
+        </div>
+        <div class="header-right">
+            <img src="../images/profile.png" alt="Изображение иконки профиля" class="header-profile">
+        </div>
+    </header>
+
+    <main class="main">
+        <h1 class="page-title">ВХОД</h1>
+
+        <div class="login-card">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Логин</label>
+                    <input type="text" class="form-input" placeholder="Введите логин" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Пароль</label>
+                    <input type="password" class="form-input" placeholder="Введите пароль" required>
+                </div>
+
+                <p class="form-note">
+                    * Вход осуществляется через аккаунт личного кабинета РУТ (МИИТ)
+                </p>
+            </form>
+        </div>
+        <button type="submit" class="btn-login">ВОЙТИ</button>
+    </main>
+
+    <footer class="footer">
+        <img src="../images/значки рута.png" alt="логотипы мин.транса">
+    </footer>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Функция входа в разработке');
+        });
+    </script>
+</body>
+
+</html>

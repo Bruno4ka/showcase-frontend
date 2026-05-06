@@ -1,0 +1,26 @@
+{
+  "name": "showcase-frontend",
+  "version": "1.0.0",
+  "description": "Фронтенд-приложение для \"Витрины проектной деятельности\" — дашборд для просмотра и анализа данных с серверной пагинацией, фильтрацией, сортировкой и поиском.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bruno4ka/showcase-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Bruno4ka/showcase-frontend/issues"
+  },
+  "homepage": "https://github.com/Bruno4ka/showcase-frontend#readme",
+  "devDependencies": {
+    "vite": "^8.0.10"
+  }
+}

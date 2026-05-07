@@ -322,6 +322,29 @@ body {
     justify-content: center;
 }
 
+.cards li {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.cards li[style*="display: none"] {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cards li {
+    animation: fadeIn 0.3s ease;
+}
+
 .card {
     background: #fff;
     color: #000000;
@@ -401,6 +424,25 @@ body {
 .footer img {
     max-width: 100%;
     height: auto;
+}
+
+.loading,
+.error,
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #fff;
+    font-size: 1.2rem;
+    width: 100%;
+    list-style: none;
+}
+
+.error {
+    color: #ff6b6b;
+}
+
+.empty {
+    color: #ccc;
 }
 
 @media (max-width: 1024px) and (min-width: 376px) {

@@ -20,9 +20,9 @@
             <img src="/images/logo.png" alt="Логтип витрины проектов ИУЦТ" class="header-logo">
         </div>
         <div class="header-right">
-            <a href="/entrance.html">
-                <img src="/images/profile.png" alt="Изображение иконки профиля" class="header-profile">
-            </a>
+            <!-- Убрали тег <a>, добавили функцию проверки -->
+            <img src="/images/profile.png" alt="Профиль" class="header-profile" onclick="goToProfile()"
+                style="cursor: pointer;">
         </div>
     </header>
 
@@ -148,7 +148,7 @@
         <img src="/images/значки рута.png" alt="логотипы мин.транса">
     </footer>
 
-    <script src="/scripts/index.js" ></script>
+    <script src="/scripts/index.js"></script>
 
 </body>
 

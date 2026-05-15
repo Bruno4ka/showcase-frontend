@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,54 +8,166 @@
     <link rel="stylesheet" href="/styles/entrance.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
 </head>
-
 <body>
     <header class="header">
         <div class="header-left">
-            <img src="/images/logo.png" alt="Логтип витрины проектов ИУЦТ" class="header-logo">
+            <img src="/images/logo.png" alt="Логотип" class="header-logo">
         </div>
         <div class="header-right">
-            <img src="/images/profile.png" alt="Изображение иконки профиля" class="header-profile">
+            <img src="/images/profile.png" alt="Профиль" class="header-profile" onclick="handleProfileClick()" style="cursor: pointer;">
         </div>
     </header>
 
     <main class="main">
         <h1 class="page-title">ВХОД</h1>
-
         <div class="login-card">
             <form id="loginForm">
                 <div class="form-group">
                     <label class="form-label">Логин</label>
-                    <input type="text" class="form-input" placeholder="Введите логин" required>
+                    <input type="text" id="username" class="form-input" placeholder="Введите логин" required>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Пароль</label>
-                    <input type="password" class="form-input" placeholder="Введите пароль" required>
+                    <input type="password" id="password" class="form-input" placeholder="Введите пароль" required>
                 </div>
-
-                <p class="form-note">
-                    * Вход осуществляется через аккаунт личного кабинета РУТ (МИИТ)
-                </p>
+                <div id="errorMessage" class="form-error" style="display: none; color: #dc3545; font-size: 14px; text-align: center; margin: 10px 0;"></div>
+                <p class="form-note">* Вход осуществляется через аккаунт личного кабинета РУТ (МИИТ)</p>
             </form>
         </div>
-        <button type="submit" class="btn-login">ВОЙТИ</button>
+        <div style="text-align:center; margin-top:20px;">
+            <button type="button" class="btn-login" id="submitBtn">ВОЙТИ</button>
+        </div>
     </main>
 
     <footer class="footer">
-        <img src="/images/значки рута.png" alt="логотипы мин.транса">
+        <img src="/images/значки рута.png" alt="логотипы">
     </footer>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            alert('Функция входа в разработке');
+        const API_BASE_URL = 'http://localhost:8080/api';
+
+        // ===== ОБРАБОТКА КЛИКА ПО ПРОФИЛЮ =====
+        function handleProfileClick() {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                window.location.href = '/profile.html';
+            } else {
+                alert('Сначала войдите в систему');
+            }
+        }
+
+        // ===== ПРОВЕРКА АВТОРИЗАЦИИ ПРИ ЗАГРУЗКЕ =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                window.location.href = '/profile.html';
+            }
+
+            const btn = document.getElementById('submitBtn');
+            const form = document.getElementById('loginForm');
+            
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    handleLogin();
+                });
+            }
+            
+            if (btn) {
+                btn.addEventListener('click', handleLogin);
+            }
+
+            // Обработка Enter в полях
+            document.getElementById('password')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
         });
+
+        // ===== ФУНКЦИЯ ВХОДА =====
+        async function handleLogin() {
+            const username = document.getElementById('username')?.value.trim();
+            const password = document.getElementById('password')?.value;
+            const errorEl = document.getElementById('errorMessage');
+            const btn = document.getElementById('submitBtn');
+            
+            if (!username || !password) {
+                showError('Заполните все поля', errorEl);
+                return;
+            }
+            
+            showError('', errorEl);
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'ВХОД...';
+            }
+            
+            try {
+                console.log('Отправка запроса на:', `${API_BASE_URL}/auth/login`);
+                
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                console.log('Статус ответа:', response.status);
+                
+                const data = await response.json();
+                console.log('Ответ сервера:', data);
+                
+                if (response.ok && data.accessToken) {
+                    // ✅ Успешный вход - сохраняем токен
+                    console.log('✅ Токен получен:', data.accessToken.substring(0, 50) + '...');
+                    localStorage.setItem('authToken', data.accessToken);
+                    
+                    // Сохраняем информацию о пользователе (опционально)
+                    localStorage.setItem('user', JSON.stringify({
+                        username: username,
+                        expiresIn: data.expiresIn || 900
+                    }));
+                    
+                    console.log('✅ Токен сохранён в localStorage');
+                    console.log('🔄 Перенаправление на /profile.html...');
+                    
+                    // Перенаправление на главную страницу
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 300);
+                    
+                } else {
+                    // ❌ Ошибка от сервера
+                    console.log('❌ Ошибка входа:', data);
+                    showError(data.message || 'Неверный логин или пароль', errorEl);
+                }
+            } catch (error) {
+                console.error('❌ Ошибка запроса:', error);
+                if (error.message.includes('Failed to fetch')) {
+                    showError('Нет соединения с сервером. Проверьте, запущен ли бэкенд на localhost:8080', errorEl);
+                } else {
+                    showError('Ошибка: ' + error.message, errorEl);
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'ВОЙТИ';
+                }
+            }
+        }
+
+        function showError(message, el) {
+            if (el) {
+                el.textContent = message;
+                el.style.display = message ? 'block' : 'none';
+            }
+        }
     </script>
 </body>
-
 </html>

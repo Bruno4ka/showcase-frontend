@@ -30,6 +30,22 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+function handleProfileClick() {
+    const token = localStorage.getItem('authToken');
+    window.location.href = token ? '/profile.html' : '/entrance.html';
+}
+
+function goToProfile() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        // Если токен есть — идем в профиль
+        window.location.href = '/profile.html';
+    } else {
+        // Если токена нет — идем на вход
+        window.location.href = '/entrance.html';
+    }
+}
+
 function buildProjectsUrl(filters, page = 0) {
     const url = new URL(API_BASE_URL + API_PROJECTS_ENDPOINT);
 

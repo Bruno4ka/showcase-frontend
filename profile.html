@@ -16,147 +16,319 @@
     <style>
         /* ===== СТИЛИ ДЛЯ ПРЕПОДАВАТЕЛЯ И ЗАКАЗЧИКА ===== */
         .teacher-filters,
-        .client-filters {
+        .client-filters,
+        .student-filters {
             display: flex;
-            gap: 25px;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: nowrap;
+            justify-content: space-between;
+            padding: 0 40px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .filter-dropdown {
+        .filters-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .filter-wrapper {
             position: relative;
         }
 
-        .filter-btn {
+        /* Кнопка фильтра — как на главной */
+        .filter-select {
             display: flex;
             align-items: center;
-            gap: 6px;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
+            gap: 8px;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            opacity: 0.9;
-            background: none;
-            border: none;
-            padding: 5px 10px;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid transparent;
+            white-space: nowrap;
         }
 
-        .filter-btn:hover {
-            opacity: 1;
+        .filter-select:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
-        .filter-btn svg {
-            width: 14px;
-            height: 14px;
+        .filter-select.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .filter-select svg {
+            width: 10px;
+            height: 10px;
+            fill: #fff;
             transition: transform 0.2s;
         }
 
-        .filter-btn.active svg {
+        .filter-select.active svg {
             transform: rotate(180deg);
         }
 
-        .dropdown-menu {
+        /* Dropdown — как на главной */
+        .dropdown {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 8px);
             left: 0;
-            margin-top: 8px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            padding: 8px 0;
-            min-width: 180px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            padding: 8px;
+            min-width: 220px;
             display: none;
-            z-index: 100;
+            z-index: 1000;
+            animation: dropdownFadeIn 0.2s ease;
         }
 
-        .dropdown-menu.show {
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown.show {
             display: block;
         }
 
+        /* Dropdown-item с кастомным чекбоксом — как на главной */
         .dropdown-item {
-            padding: 10px 16px;
-            font-size: 14px;
-            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            user-select: none;
+            border-radius: 8px;
+            margin-bottom: 2px;
+            color: #000000;
+            background-color: #ffffff;
         }
 
         .dropdown-item:hover {
-            background-color: #f0f4f8;
+            background-color: #f0f0f0;
+            color: #000000;
+        }
+
+        .dropdown-item.selected {
+            background: #e3f0ff;
+            font-weight: 600;
+        }
+
+        .dropdown-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1B5AB9;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            background: white;
+        }
+
+        .dropdown-item input:checked+.checkbox-custom {
+            background: #1B5AB9;
+            border-color: #1B5AB9;
+        }
+
+        .dropdown-item input:checked+.checkbox-custom::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .dropdown-item-text {
+            flex: 1;
+            font-size: 14px;
+            color: #1A365D;
+            font-weight: 500;
+        }
+
+        .dropdown-item.selected .dropdown-item-text {
+            color: #1B5AB9;
+            font-weight: 600;
+        }
+
+        /* Счётчик выбранных — как на главной */
+        #label-type::after,
+        #label-dept::after,
+        #label-team::after,
+        #label-status::after,
+        #student-label-type::after,
+        #student-label-dept::after,
+        #team-label-type::after,
+        #team-label-dept::after {
+            content: '';
+            margin-left: 4px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        #label-type[data-count]:not([data-count="0"])::after,
+        #label-dept[data-count]:not([data-count="0"])::after,
+        #label-team[data-count]:not([data-count="0"])::after,
+        #label-status[data-count]:not([data-count="0"])::after,
+        #student-label-type[data-count]:not([data-count="0"])::after,
+        #student-label-dept[data-count]:not([data-count="0"])::after,
+        #team-label-type[data-count]:not([data-count="0"])::after,
+        #team-label-dept[data-count]:not([data-count="0"])::after {
+            content: attr(data-count);
+        }
+
+        /* Кнопка сброса — как на главной */
+        .btn-reset-filters {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .btn-reset-filters:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-reset-filters:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset-filters svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         .teacher-search-box,
-        .client-search-box {
-            position: relative;
+        .client-search-box,
+        .student-search-box {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 50px;
+            padding: 9px 15px;
+            gap: 8px;
+            min-width: 323px;
         }
 
         .teacher-search-box input,
-        .client-search-box input {
-            width: 350px;
-            padding: 12px 45px 12px 16px;
-            background-color: white;
+        .client-search-box input,
+        .student-search-box input {
             border: none;
-            border-radius: 25px;
-            font-size: 14px;
-            color: #333;
             outline: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            font-size: 15px;
+            color: #6b7280;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .teacher-search-box input::placeholder,
+        .client-search-box input::placeholder,
+        .student-search-box input::placeholder {
+            color: #b0b7c3;
         }
 
         .teacher-search-box svg,
-        .client-search-box svg {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: #333;
+        .client-search-box svg,
+        .student-search-box svg {
+            width: 30px;
+            height: 30px;
+            fill: black;
+            flex-shrink: 0;
         }
 
         .projects-grid-teacher,
-        .projects-grid-client {
-            display: flex;
-            flex-wrap: wrap;
+        .projects-grid-client,
+        .projects-grid-student {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 225px);
+            gap: 26px;
+            margin: 0 40px;
+            padding: 0;
+            list-style: none;
+            align-items: stretch;
             justify-content: center;
-            gap: 25px;
-            margin-top: 20px;
         }
 
         /* ===== КАРТОЧКИ ОДИНАКОВОГО РАЗМЕРА ===== */
         .project-card-teacher,
-        .project-card-client {
-            background-color: white;
+        .project-card-client,
+        .project-card-student {
+            background: #fff;
+            color: #000000;
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             width: 225px;
-            height: 325px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            min-height: 325px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .project-card-teacher:hover,
-        .project-card-client:hover {
+        .project-card-client:hover,
+        .project-card-student:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
         }
 
         .project-title-teacher,
-        .project-title-client {
-            font-size: 18px;
+        .project-title-client,
+        .project-title-student {
+            font-size: 16px;
             font-weight: 700;
-            color: #000;
-            line-height: 1.3;
+            line-height: 1.4;
             margin-bottom: 12px;
-            min-height: 50px;
+            min-height: 40px;
         }
 
         .project-status-teacher,
-        .project-status-client {
+        .project-status-client,
+        .project-status-student {
             font-size: 13px;
             font-weight: 500;
             margin-bottom: 10px;
@@ -167,93 +339,88 @@
         }
 
         .project-status-teacher.in-work,
-        .project-status-client.verification {
+        .project-status-student.in-work {
             color: #f59e0b;
         }
 
         .project-status-teacher.completed,
+        .project-status-student.completed {
+            color: #10b981;
+        }
+
+        .project-status-teacher.cancelled,
+        .project-status-student.rejected {
+            color: #ef4444;
+        }
+
+        .project-status-client.verification {
+            color: #1e40af;
+        }
+
         .project-status-client.free,
         .project-status-client.approved {
             color: #10b981;
         }
 
-        .project-status-teacher.cancelled,
         .project-status-client.rejected {
             color: #ef4444;
         }
 
-        .project-status-client.verification {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-
-        .project-status-client.free {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .project-status-client.rejected {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-
-        .project-status-client.approved {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
         .project-info-teacher,
-        .project-info-client {
-            font-size: 13px;
-            color: #333;
-            line-height: 1.5;
-            margin-bottom: 8px;
+        .project-info-client,
+        .project-info-student {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #555;
         }
 
         .project-info-teacher strong,
-        .project-info-client strong {
+        .project-info-client strong,
+        .project-info-student strong {
             font-weight: 600;
-            color: #000;
         }
 
         .project-goal-teacher,
-        .project-goal-client {
-            font-size: 13px;
-            color: #333;
-            line-height: 1.5;
+        .project-goal-client,
+        .project-goal-student {
             flex: 1;
-            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #333;
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 4;
+            -webkit-line-clamp: 6;
             -webkit-box-orient: vertical;
         }
 
         .project-button-teacher,
-        .project-button-client {
+        .project-button-client,
+        .project-button-student {
+            padding: 12px 30px;
             border: none;
             border-radius: 25px;
             font-size: 14px;
-            padding: 12px 30px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: auto;
+            transition: all 0.3s ease;
             align-self: center;
+            margin-top: auto;
             color: white;
-            background-color: #1a8a7d;
-            transition: background-color 0.3s;
+            min-width: 140px;
+            background-color: #1A9393;
         }
 
         .project-button-teacher:hover,
-        .project-button-client:hover {
-            background-color: #157a6e;
+        .project-button-client:hover,
+        .project-button-student:hover {
+            transform: translateY(-2px);
         }
 
         /* ===== КНОПКА СОЗДАНИЯ ПРОЕКТА ===== */
         .create-project-btn-wrapper {
             display: flex;
             align-items: center;
-            margin-left: auto;
         }
 
         .create-project-btn {
@@ -414,7 +581,8 @@
 
         /* ===== УВЕДОМЛЕНИЯ ===== */
         .notifications-list-teacher,
-        .notifications-list-client {
+        .notifications-list-client,
+        .notifications-list-student {
             margin-top: 20px;
             display: flex;
             flex-direction: column;
@@ -422,7 +590,8 @@
         }
 
         .notification-item-teacher,
-        .notification-item-client {
+        .notification-item-client,
+        .notification-item-student {
             background-color: white;
             border-radius: 16px;
             padding: 20px;
@@ -433,7 +602,8 @@
         }
 
         .notification-icon-teacher,
-        .notification-icon-client {
+        .notification-icon-client,
+        .notification-icon-student {
             width: 12px;
             height: 12px;
             background-color: #10b981;
@@ -443,12 +613,14 @@
         }
 
         .notification-content-teacher,
-        .notification-content-client {
+        .notification-content-client,
+        .notification-content-student {
             flex: 1;
         }
 
         .notification-text-teacher,
-        .notification-text-client {
+        .notification-text-client,
+        .notification-text-student {
             font-size: 14px;
             color: #333;
             line-height: 1.6;
@@ -456,16 +628,52 @@
         }
 
         .notification-text-teacher strong,
-        .notification-text-client strong {
+        .notification-text-client strong,
+        .notification-text-student strong {
             font-weight: 600;
             color: #000;
         }
 
         .notification-time-teacher,
-        .notification-time-client {
+        .notification-time-client,
+        .notification-time-student {
             font-size: 12px;
             color: #999;
             text-align: right;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .notification-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-btn.accept {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .notification-btn.accept:hover {
+            background-color: #059669;
+        }
+
+        .notification-btn.reject {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .notification-btn.reject:hover {
+            background-color: #dc2626;
         }
 
         /* ===== МОДАЛЬНОЕ ОКНО ЗАКАЗЧИКА ===== */
@@ -593,6 +801,316 @@
         .btn-submit-client:hover {
             background-color: #333;
         }
+
+        /* ===== ПРОФИЛЬ КОМАНДЫ СТУДЕНТА ===== */
+        .team-profile-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            position: relative;
+            min-height: 500px;
+            padding-bottom: 80px;
+        }
+
+        .team-name-header {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .team-layout-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .team-participants-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .participants-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .participants-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 14px;
+            padding: 4px 0;
+        }
+
+        .leader-star {
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .team-projects-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .team-projects-filters {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-filter-dropdown {
+            position: relative;
+        }
+
+        .team-filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .team-filter-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .team-filter-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .team-filter-btn svg {
+            width: 10px;
+            height: 10px;
+            fill: #fff;
+            transition: transform 0.2s;
+        }
+
+        .team-filter-btn.active svg {
+            transform: rotate(180deg);
+        }
+
+        .team-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            padding: 8px;
+            min-width: 220px;
+            display: none;
+            z-index: 1000;
+            animation: dropdownFadeIn 0.2s ease;
+        }
+
+        .team-dropdown-menu.show {
+            display: block;
+        }
+
+        .team-dropdown-menu label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            border-radius: 8px;
+            margin-bottom: 2px;
+            color: #000000;
+            background-color: #ffffff;
+        }
+
+        .team-dropdown-menu label:hover {
+            background-color: #f0f0f0;
+        }
+
+        .team-dropdown-menu label.selected {
+            background: #e3f0ff;
+        }
+
+        .team-dropdown-menu label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .team-dropdown-menu label .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1B5AB9;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            background: white;
+        }
+
+        .team-dropdown-menu label input:checked+.checkbox-custom {
+            background: #1B5AB9;
+            border-color: #1B5AB9;
+        }
+
+        .team-dropdown-menu label input:checked+.checkbox-custom::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .team-dropdown-menu label .dropdown-item-text {
+            flex: 1;
+            font-size: 14px;
+            color: #1A365D;
+            font-weight: 500;
+        }
+
+        .team-search-box {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 50px;
+            padding: 9px 15px;
+            gap: 8px;
+            min-width: 280px;
+        }
+
+        .team-search-box input {
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #6b7280;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .team-search-box input::placeholder {
+            color: #b0b7c3;
+        }
+
+        .team-search-box svg {
+            width: 30px;
+            height: 30px;
+            fill: black;
+            flex-shrink: 0;
+        }
+
+        .team-projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 225px);
+            gap: 26px;
+            justify-content: center;
+        }
+
+        .leave-team-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            padding: 12px 24px;
+            background-color: white;
+            border: 2px solid;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .leave-team-btn:hover {
+            background-color: #fef2f2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .leave-team-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .empty-state-student {
+            background-color: white;
+            border-radius: 20px;
+            padding: 60px 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .empty-text-student {
+            font-size: 36px;
+            font-weight: 700;
+            color: #d0d0d0;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 900px) {
+            .team-layout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-participants-panel {
+                order: 2;
+            }
+
+            .team-projects-panel {
+                order: 1;
+            }
+
+            .student-search-box input,
+            .team-search-box input {
+                width: 200px;
+            }
+
+            .leave-team-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 
@@ -620,6 +1138,10 @@
                             <span class="profile-login-label">Логин:</span>
                             <span class="profile-email" id="profileEmail">Загрузка...</span>
                         </div>
+                        <div style="margin-top: 8px; display: none;" id="profileTeamWrapper">
+                            <span class="profile-login-label">Команда:</span>
+                            <span class="profile-team" id="profileTeam">—</span>
+                        </div>
                     </div>
                     <button class="edit-button">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -641,114 +1163,139 @@
                 </div>
 
                 <div class="projects-filters controls-group active" id="controls-projects">
-                    <div class="projects-filters-left">
+                    <div class="filters-left">
                         <div class="filter-wrapper">
-                            <button class="filter-btn" onclick="toggleDropdown('dropdown-type', this)">
-                                <span id="label-type">Тип проекта</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            <button class="filter-select" onclick="toggleDropdown('dropdown-type', this)">
+                                <span id="label-type" data-count="0">Тип проекта</span>
+                                <svg viewBox="0 0 10 6">
+                                    <polygon points="0,0 10,0 5,6" />
                                 </svg>
                             </button>
                             <div class="dropdown" id="dropdown-type">
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-type', 'label-type', 'Исследовательский')">
-                                    Исследовательский</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-type', 'label-type', 'Практический')">Практический
-                                </div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-type', 'label-type', 'Учебный')">
-                                    Учебный</div>
+                                <label class="dropdown-item">
+                                    <input type="checkbox"
+                                        onchange="selectAdminFilter('type', 'Исследовательский', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Исследовательский</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('type', 'Практический', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Практический</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('type', 'Учебный', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Учебный</span>
+                                </label>
                             </div>
                         </div>
                         <div class="filter-wrapper">
-                            <button class="filter-btn" onclick="toggleDropdown('dropdown-dept', this)">
-                                <span id="label-dept">Кафедра</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            <button class="filter-select" onclick="toggleDropdown('dropdown-dept', this)">
+                                <span id="label-dept" data-count="0">Кафедра</span>
+                                <svg viewBox="0 0 10 6">
+                                    <polygon points="0,0 10,0 5,6" />
                                 </svg>
                             </button>
                             <div class="dropdown" id="dropdown-dept">
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-dept', 'label-dept', 'УТБиИС')">
-                                    УТБиИС</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-dept', 'label-dept', 'ЛТСТ')">
-                                    ЛТСТ</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-dept', 'label-dept', 'УЭРиБТ')">
-                                    УЭРиБТ</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-dept', 'label-dept', 'ХиИЭ')">
-                                    ХиИЭ</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-dept', 'label-dept', 'ЦТУТП')">
-                                    ЦТУТП</div>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('dept', 'УТБиИС', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">УТБиИС</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('dept', 'ЛТСТ', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">ЛТСТ</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('dept', 'УЭРиБТ', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">УЭРиБТ</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('dept', 'ХиИЭ', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">ХиИЭ</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('dept', 'ЦТУТП', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">ЦТУТП</span>
+                                </label>
                             </div>
                         </div>
                         <div class="filter-wrapper">
-                            <button class="filter-btn" onclick="toggleDropdown('dropdown-team', this)">
-                                <span id="label-team">Команда</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            <button class="filter-select" onclick="toggleDropdown('dropdown-team', this)">
+                                <span id="label-team" data-count="0">Команда</span>
+                                <svg viewBox="0 0 10 6">
+                                    <polygon points="0,0 10,0 5,6" />
                                 </svg>
                             </button>
                             <div class="dropdown" id="dropdown-team">
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-team', 'label-team', 'Есть команда')">Есть команда
-                                </div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-team', 'label-team', 'Нет команды')">Нет команды
-                                </div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-team', 'label-team', 'Ищу участников')">Ищу
-                                    участников
-                                </div>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('team', 'Есть команда', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Есть команда</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('team', 'Нет команды', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Нет команды</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('team', 'Ищу участников', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Ищу участников</span>
+                                </label>
                             </div>
                         </div>
                         <div class="filter-wrapper">
-                            <button class="filter-btn" onclick="toggleDropdown('dropdown-status', this)">
-                                <span id="label-status">Статус</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            <button class="filter-select" onclick="toggleDropdown('dropdown-status', this)">
+                                <span id="label-status" data-count="0">Статус</span>
+                                <svg viewBox="0 0 10 6">
+                                    <polygon points="0,0 10,0 5,6" />
                                 </svg>
                             </button>
                             <div class="dropdown" id="dropdown-status">
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-status', 'label-status', 'Свободно')">Свободно</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-status', 'label-status', 'Завершён')">Завершён</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-status', 'label-status', 'На верификации')">На
-                                    верификации</div>
-                                <div class="dropdown-item"
-                                    onclick="selectOption('dropdown-status', 'label-status', 'В работе')">В работе</div>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('status', 'Свободно', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Свободно</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('status', 'Завершён', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">Завершён</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox"
+                                        onchange="selectAdminFilter('status', 'На верификации', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">На верификации</span>
+                                </label>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" onchange="selectAdminFilter('status', 'В работе', this)">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="dropdown-item-text">В работе</span>
+                                </label>
                             </div>
                         </div>
-                    </div>
-                    <div class="projects-filters-center">
-                        <div class="projects-search">
-                            <input type="text" placeholder="Поиск по названию">
-                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <button class="btn-reset-filters" onclick="resetAdminFilters()">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                             </svg>
-                        </div>
-                    </div>
-                    <div class="projects-filters-right">
-                        <button class="action-button-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                            Создать заявку на проект
+                            Сбросить
                         </button>
+                    </div>
+                    <div class="teacher-search-box">
+                        <input type="text" id="adminSearchInput" placeholder="Поиск по названию"
+                            oninput="handleAdminSearch()">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                        </svg>
                     </div>
                 </div>
 
@@ -848,92 +1395,144 @@
                     <button class="tab-button" data-tab="teacher-notifications">Центр уведомлений</button>
                 </div>
 
-                <!-- Вкладка: Список проектов (преподаватель) -->
                 <div class="tab-content active" id="tab-teacher-projects">
                     <div class="teacher-filters">
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleFilter('type')">
-                                <span id="label-type">Тип проекта</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-type">
-                                <div class="dropdown-item" onclick="applyFilter('type', null, 'Тип проекта')">Все</div>
-                                <div class="dropdown-item"
-                                    onclick="applyFilter('type', 'Исследовательский', 'Исследовательский')">
-                                    Исследовательский</div>
-                                <div class="dropdown-item"
-                                    onclick="applyFilter('type', 'Практический', 'Практический')">Практический</div>
-                                <div class="dropdown-item" onclick="applyFilter('type', 'Учебный', 'Учебный')">Учебный
+                        <div class="filters-left">
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleFilter('type')">
+                                    <span id="label-type" data-count="0">Тип проекта</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-type">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectFilter('type', 'Исследовательский', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Исследовательский</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('type', 'Практический', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Практический</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('type', 'Учебный', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Учебный</span>
+                                    </label>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleFilter('dept')">
-                                <span id="label-dept">Кафедра</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-dept">
-                                <div class="dropdown-item" onclick="applyFilter('dept', null, 'Кафедра')">Все</div>
-                                <div class="dropdown-item" onclick="applyFilter('dept', 'ЛТСТ', 'ЛТСТ')">ЛТСТ</div>
-                                <div class="dropdown-item" onclick="applyFilter('dept', 'УЭРиБТ', 'УЭРиБТ')">УЭРиБТ
-                                </div>
-                                <div class="dropdown-item" onclick="applyFilter('dept', 'ХиИЭ', 'ХиИЭ')">ХиИЭ</div>
-                                <div class="dropdown-item" onclick="applyFilter('dept', 'ЦТУТП', 'ЦТУТП')">ЦТУТП</div>
-                                <div class="dropdown-item" onclick="applyFilter('dept', 'УТБиИС', 'УТБиИС')">УТБиИС
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleFilter('team')">
-                                <span id="label-team">Команда</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-team">
-                                <div class="dropdown-item" onclick="applyFilter('team', null, 'Команда')">Все</div>
-                                <div class="dropdown-item"
-                                    onclick="applyFilter('team', 'Святой Источник', 'Святой Источник')">Святой Источник
-                                </div>
-                                <div class="dropdown-item" onclick="applyFilter('team', 'Транспорт+', 'Транспорт+')">
-                                    Транспорт+</div>
-                                <div class="dropdown-item" onclick="applyFilter('team', 'ЭкоЛогика', 'ЭкоЛогика')">
-                                    ЭкоЛогика</div>
-                            </div>
-                        </div>
-
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleFilter('status')">
-                                <span id="label-status">Статус</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-status">
-                                <div class="dropdown-item" onclick="applyFilter('status', null, 'Статус')">Все</div>
-                                <div class="dropdown-item" onclick="applyFilter('status', 'в работе', 'в работе')">В
-                                    работе</div>
-                                <div class="dropdown-item" onclick="applyFilter('status', 'завершен', 'завершен')">
-                                    Завершен</div>
-                                <div class="dropdown-item" onclick="applyFilter('status', 'отклонен', 'отклонен')">
-                                    Отклонен</div>
-                                <div class="dropdown-item"
-                                    onclick="applyFilter('status', 'на верификации', 'на верификации')">На верификации
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleFilter('dept')">
+                                    <span id="label-dept" data-count="0">Кафедра</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-dept">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('dept', 'ЛТСТ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЛТСТ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('dept', 'УЭРиБТ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">УЭРиБТ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('dept', 'ХиИЭ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ХиИЭ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('dept', 'ЦТУТП', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЦТУТП</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('dept', 'УТБиИС', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">УТБиИС</span>
+                                    </label>
                                 </div>
                             </div>
-                        </div>
 
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleFilter('team')">
+                                    <span id="label-team" data-count="0">Команда</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-team">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('team', 'Святой Источник', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Святой Источник</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('team', 'Транспорт+', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Транспорт+</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('team', 'ЭкоЛогика', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЭкоЛогика</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleFilter('status')">
+                                    <span id="label-status" data-count="0">Статус</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-status">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('status', 'в работе', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">В работе</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('status', 'завершен', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Завершен</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectFilter('status', 'отклонен', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Отклонен</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectFilter('status', 'на верификации', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">На верификации</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button class="btn-reset-filters" onclick="resetTeacherFilters()">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                </svg>
+                                Сбросить
+                            </button>
+                        </div>
                         <div class="teacher-search-box">
                             <input type="text" id="searchInput" placeholder="Поиск по названию"
                                 oninput="handleSearch()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                             </svg>
                         </div>
                     </div>
@@ -941,7 +1540,6 @@
                     <div class="projects-grid-teacher" id="projectsGridTeacher"></div>
                 </div>
 
-                <!-- Вкладка: Группы студентов (преподаватель) -->
                 <div class="tab-content" id="tab-teacher-groups">
                     <div class="groups-search-container" style="margin-bottom: 20px;">
                         <div class="groups-search">
@@ -962,7 +1560,6 @@
                     <div class="groups-container-teacher" id="groupsContainer"></div>
                 </div>
 
-                <!-- Вкладка: Центр уведомлений -->
                 <div class="tab-content" id="tab-teacher-notifications">
                     <div class="notifications-list-teacher" id="notificationsList"></div>
                 </div>
@@ -975,83 +1572,123 @@
                     <button class="tab-button" data-tab="client-notifications">Центр уведомлений</button>
                 </div>
 
-                <!-- Вкладка: Список проектов -->
                 <div class="tab-content active" id="tab-client-projects">
                     <div class="client-filters">
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleClientFilter('type')">
-                                <span id="label-type">Тип проекта</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-type">
-                                <div class="dropdown-item" onclick="applyClientFilter('type', null, 'Тип проекта')">Все
+                        <div class="filters-left">
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleClientFilter('type', this)">
+                                    <span id="label-type" data-count="0">Тип проекта</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-type">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectClientFilter('type', 'Исследовательский', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Исследовательский</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectClientFilter('type', 'Практический', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Практический</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('type', 'Учебный', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Учебный</span>
+                                    </label>
                                 </div>
-                                <div class="dropdown-item"
-                                    onclick="applyClientFilter('type', 'Исследовательский', 'Исследовательский')">
-                                    Исследовательский</div>
-                                <div class="dropdown-item"
-                                    onclick="applyClientFilter('type', 'Практический', 'Практический')">Практический
-                                </div>
-                                <div class="dropdown-item" onclick="applyClientFilter('type', 'Учебный', 'Учебный')">
-                                    Учебный</div>
                             </div>
-                        </div>
 
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleClientFilter('dept')">
-                                <span id="label-dept">Кафедра</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-dept">
-                                <div class="dropdown-item" onclick="applyClientFilter('dept', null, 'Кафедра')">Все
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleClientFilter('dept', this)">
+                                    <span id="label-dept" data-count="0">Кафедра</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-dept">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('dept', 'ЛТСТ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЛТСТ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('dept', 'УЭРиБТ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">УЭРиБТ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('dept', 'ХиИЭ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ХиИЭ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('dept', 'ЦТУТП', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЦТУТП</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('dept', 'УТБиИС', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">УТБиИС</span>
+                                    </label>
                                 </div>
-                                <div class="dropdown-item" onclick="applyClientFilter('dept', 'ЛТСТ', 'ЛТСТ')">ЛТСТ
-                                </div>
-                                <div class="dropdown-item" onclick="applyClientFilter('dept', 'УЭРиБТ', 'УЭРиБТ')">
-                                    УЭРиБТ</div>
-                                <div class="dropdown-item" onclick="applyClientFilter('dept', 'ХиИЭ', 'ХиИЭ')">ХиИЭ
-                                </div>
-                                <div class="dropdown-item" onclick="applyClientFilter('dept', 'ЦТУТП', 'ЦТУТП')">ЦТУТП
-                                </div>
-                                <div class="dropdown-item" onclick="applyClientFilter('dept', 'УТБиИС', 'УТБиИС')">
-                                    УТБиИС</div>
                             </div>
-                        </div>
 
-                        <div class="filter-dropdown">
-                            <button class="filter-btn" onclick="toggleClientFilter('status')">
-                                <span id="label-status">Статус</span>
-                                <svg viewBox="0 0 10 6">
-                                    <polygon points="0,0 10,0 5,6" fill="currentColor" />
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="dropdown-status">
-                                <div class="dropdown-item" onclick="applyClientFilter('status', null, 'Статус')">Все
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleClientFilter('status', this)">
+                                    <span id="label-status" data-count="0">Статус</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="dropdown-status">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectClientFilter('status', 'на верификации', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">На верификации</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectClientFilter('status', 'свободно', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Свободно</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectClientFilter('status', 'отклонен', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Отклонен</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectClientFilter('status', 'одобрен', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Одобрен</span>
+                                    </label>
                                 </div>
-                                <div class="dropdown-item"
-                                    onclick="applyClientFilter('status', 'на верификации', 'на верификации')">На
-                                    верификации</div>
-                                <div class="dropdown-item"
-                                    onclick="applyClientFilter('status', 'свободно', 'свободно')">Свободно</div>
-                                <div class="dropdown-item"
-                                    onclick="applyClientFilter('status', 'отклонен', 'отклонен')">Отклонен</div>
-                                <div class="dropdown-item" onclick="applyClientFilter('status', 'одобрен', 'одобрен')">
-                                    Одобрен</div>
                             </div>
-                        </div>
 
+                            <button class="btn-reset-filters" onclick="resetClientFilters()">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                </svg>
+                                Сбросить
+                            </button>
+                        </div>
                         <div class="client-search-box">
                             <input type="text" id="clientSearchInput" placeholder="Поиск по названию"
                                 oninput="handleClientSearch()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                             </svg>
                         </div>
-
                         <div class="create-project-btn-wrapper">
                             <button class="create-project-btn" onclick="openNewProjectModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1066,9 +1703,219 @@
                     <div class="projects-grid-client" id="projectsGridClient"></div>
                 </div>
 
-                <!-- Вкладка: Центр уведомлений -->
                 <div class="tab-content" id="tab-client-notifications">
                     <div class="notifications-list-client" id="notificationsListClient"></div>
+                </div>
+            </div>
+
+            <!-- ==================== СЕКЦИЯ СТУДЕНТА ==================== -->
+            <div id="studentSection" class="role-section" style="display: none;">
+                <div class="tabs-container">
+                    <button class="tab-button active" data-tab="student-projects">Список проектов</button>
+                    <button class="tab-button" data-tab="student-team">Профиль команды</button>
+                    <button class="tab-button" data-tab="student-notifications">Центр уведомлений</button>
+                </div>
+
+                <!-- Вкладка: Список проектов (студент) -->
+                <div class="tab-content active" id="tab-student-projects">
+                    <div class="student-filters">
+                        <div class="filters-left">
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleStudentFilter('type', this)">
+                                    <span id="student-label-type" data-count="0">Тип проекта</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="student-dropdown-type">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectStudentFilter('type', 'Исследовательский', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Исследовательский</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox"
+                                            onchange="selectStudentFilter('type', 'Практический', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Практический</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectStudentFilter('type', 'Учебный', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">Учебный</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="filter-wrapper">
+                                <button class="filter-select" onclick="toggleStudentFilter('dept', this)">
+                                    <span id="student-label-dept" data-count="0">Кафедра</span>
+                                    <svg viewBox="0 0 10 6">
+                                        <polygon points="0,0 10,0 5,6" />
+                                    </svg>
+                                </button>
+                                <div class="dropdown" id="student-dropdown-dept">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectStudentFilter('dept', 'ЛТСТ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЛТСТ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectStudentFilter('dept', 'УЭРиБТ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">УЭРиБТ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectStudentFilter('dept', 'ХиИЭ', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ХиИЭ</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectStudentFilter('dept', 'ЦТУТП', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">ЦТУТП</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" onchange="selectStudentFilter('dept', 'УТБиИС', this)">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="dropdown-item-text">УТБиИС</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button class="btn-reset-filters" onclick="resetStudentFilters()">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                </svg>
+                                Сбросить
+                            </button>
+                        </div>
+                        <div class="student-search-box">
+                            <input type="text" id="studentSearchInput" placeholder="Поиск по названию"
+                                oninput="handleStudentSearch()">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="projects-grid-student" id="projectsGridStudent"></div>
+                </div>
+
+                <!-- Вкладка: Профиль команды -->
+                <div class="tab-content" id="tab-student-team">
+                    <div class="team-profile-wrapper">
+                        <div class="team-name-header" id="teamNameHeader">"Святой Источник"</div>
+
+                        <div class="team-layout-grid">
+                            <!-- Левая колонка: Участники -->
+                            <div class="team-participants-panel">
+                                <div class="participants-title">Участники</div>
+                                <ul class="participants-list" id="participantsList"></ul>
+                            </div>
+
+                            <!-- Правая колонка: Проекты с фильтрами -->
+                            <div class="team-projects-panel">
+                                <div class="team-projects-filters">
+                                    <div class="team-filter-dropdown">
+                                        <button class="team-filter-btn" onclick="toggleTeamFilter('type', this)">
+                                            <span id="team-label-type" data-count="0">Тип проекта</span>
+                                            <svg viewBox="0 0 10 6">
+                                                <polygon points="0,0 10,0 5,6" />
+                                            </svg>
+                                        </button>
+                                        <div class="team-dropdown-menu" id="team-dropdown-type">
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('type', 'Исследовательский', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">Исследовательский</span>
+                                            </label>
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('type', 'Практический', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">Практический</span>
+                                            </label>
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('type', 'Учебный', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">Учебный</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="team-filter-dropdown">
+                                        <button class="team-filter-btn" onclick="toggleTeamFilter('dept', this)">
+                                            <span id="team-label-dept" data-count="0">Кафедра</span>
+                                            <svg viewBox="0 0 10 6">
+                                                <polygon points="0,0 10,0 5,6" />
+                                            </svg>
+                                        </button>
+                                        <div class="team-dropdown-menu" id="team-dropdown-dept">
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('dept', 'ЛТСТ', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">ЛТСТ</span>
+                                            </label>
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('dept', 'УЭРиБТ', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">УЭРиБТ</span>
+                                            </label>
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('dept', 'ХиИЭ', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">ХиИЭ</span>
+                                            </label>
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('dept', 'ЦТУТП', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">ЦТУТП</span>
+                                            </label>
+                                            <label>
+                                                <input type="checkbox"
+                                                    onchange="selectTeamFilter('dept', 'УТБиИС', this)">
+                                                <span class="checkbox-custom"></span>
+                                                <span class="dropdown-item-text">УТБиИС</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn-reset-filters" onclick="resetTeamFilters()">
+                                        <svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                        </svg>
+                                        Сбросить
+                                    </button>
+                                </div>
+
+                                <div class="team-projects-grid" id="teamProjectsGrid"></div>
+                            </div>
+                        </div>
+
+                        <button class="leave-team-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Покинуть команду
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Центр уведомлений -->
+                <div class="tab-content" id="tab-student-notifications">
+                    <div class="notifications-list-student" id="notificationsListStudent"></div>
                 </div>
             </div>
         </div>
@@ -1171,7 +2018,7 @@
     <script>
         // ===== КОНФИГУРАЦИЯ РОЛЕЙ =====
         const ROLE_CONFIG = {
-            'STUDENT': { tabs: ['myProjects', 'notifications'] },
+            'STUDENT': { tabs: ['student-projects', 'student-team', 'student-notifications'] },
             'CLIENT': { tabs: ['client-projects', 'client-notifications'] },
             'ADMINISTRATOR': { tabs: ['projects', 'groups', 'users'] },
             'TEACHER': { tabs: ['teacher-projects', 'teacher-groups', 'teacher-notifications'] }
@@ -1219,11 +2066,54 @@
             { text: 'Вы предложили проект "Большой лес". Заявка временно находиться в статусе "на верификации" пока работа не получит подтверждения на публикацию', time: '12:32 02.03.2026' }
         ];
 
-        // Состояние фильтров
-        let activeFilters = { type: null, dept: null, team: null, status: null };
-        let searchQuery = '';
-        let clientActiveFilters = { type: null, dept: null, status: null };
+        // Данные для студента
+        const studentProjectsData = [
+            { id: 1, title: '35% ПЛЮС', type: 'Практический', dept: 'ЛТСТ', status: 'в работе', goal: 'Хочет уменьшить порожний пробег вагонов между терминалами Московского транспортного узла на 35%' },
+            { id: 2, title: 'Безопасный автопропуск', type: 'Исследовательский', dept: 'УЭРиБТ', status: 'завершен', goal: 'Уйти от ручного заполнения Excel-таблиц, перейдя на удобную систему хранения и обработки данных.' },
+            { id: 3, title: 'На круги ЭКО', type: 'Учебный', dept: 'ХиИЭ', status: 'отклонен', goal: 'Разработать технологию переработки отслуживших шин в покрытия для велодорожек.' }
+        ];
+
+        const studentTeamData = {
+            name: 'Святой Источник',
+            members: [
+                { name: 'Москаленко Егор', isLeader: true },
+                { name: 'Приставка Елизавета', isLeader: false },
+                { name: 'Балакшина Валерия', isLeader: false },
+                { name: 'Пеньков Семён', isLeader: false },
+                { name: 'Шаров Арсений', isLeader: false },
+                { name: 'Ведерников Роман', isLeader: false }
+            ],
+            projects: [
+                { id: 1, title: '35% ПЛЮС', type: 'Практический', dept: 'ЛТСТ', status: 'в работе', goal: 'Хочет уменьшить порожний пробег вагонов между терминалами Московского транспортного узла на 35%' },
+                { id: 2, title: 'Безопасный автопропуск', type: 'Исследовательский', dept: 'УЭРиБТ', status: 'завершен', goal: 'Уйти от ручного заполнения Excel-таблиц, перейдя на удобную систему хранения и обработки данных.' },
+                { id: 3, title: 'На круги ЭКО', type: 'Учебный', dept: 'ХиИЭ', status: 'отклонен', goal: 'Разработать технологию переработки отслуживших шин в покрытия для велодорожек.' }
+            ]
+        };
+
+        const studentNotificationsData = [
+            { text: 'Проект "Паскаль" над которым вы работали сменил статус с " в работе" на "готово". Поздравляем с завершением работы!', time: '12:32 02.03.2026', hasActions: false },
+            { text: 'Пользователь с логином balakshina.lera@gmail.com принял ваше приглашение и вступил в команду.', time: '12:32 02.03.2026', hasActions: false },
+            { text: 'Вы отправили приглашение пользователю с логином balakshina.lera@gmail.com в команду "Святой Источник".', time: '12:32 02.03.2026', hasActions: false },
+            { text: 'Вы были приглашены в команду "Святой Источник", желаете вступить?', time: '12:32 02.03.2026', hasActions: true, acceptText: 'ВСТУПИТЬ', rejectText: 'ОТКЛОНИТЬ' },
+            { text: 'Вы начали работу над проектом "Паскаль" в качестве участника команды "Святой Источник", статус проекта изменен на "в работе"', time: '12:32 02.03.2026', hasActions: false },
+            { text: 'Проект "Паскаль" над которым вы работали сменил статус с " в работе" на "отклонено". За дополнительной информацией обращайтесь к своему научному руководителю.', time: '12:32 02.03.2026', hasActions: false }
+        ];
+
+        // Состояние фильтров (массивы для множественного выбора)
+        let adminFilters = { type: [], dept: [], team: [], status: [] };
+        let adminSearchQuery = '';
+
+        let teacherFilters = { type: [], dept: [], team: [], status: [] };
+        let teacherSearchQuery = '';
+
+        let clientFilters = { type: [], dept: [], status: [] };
         let clientSearchQuery = '';
+
+        let studentFilters = { type: [], dept: [] };
+        let studentSearchQuery = '';
+
+        let teamFilters = { type: [], dept: [] };
+        let teamSearchQuery = '';
 
         // ===== ОБЩАЯ ФУНКЦИЯ НАСТРОЙКИ ВКЛАДОК =====
         function setupTabs() {
@@ -1233,6 +2123,8 @@
                 setupTeacherTabs();
             } else if (currentUser.role === 'CLIENT') {
                 setupClientTabs();
+            } else if (currentUser.role === 'STUDENT') {
+                setupStudentTabs();
             }
         }
 
@@ -1240,14 +2132,12 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('authToken');
 
-            // Тестовые данные по умолчанию (для разработки без токена)
             currentUser = {
                 role: 'ADMINISTRATOR',
                 name: 'Балакшина Валерия Максимовна',
                 email: 'balakshina.lera@gmail.com'
             };
 
-            // Если токен есть, пытаемся подставить реальные данные
             if (token) {
                 try {
                     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -1256,7 +2146,6 @@
                     if (ROLE_CONFIG.hasOwnProperty(userRole)) {
                         currentUser.role = userRole;
 
-                        // Логика получения имени из токена
                         if (payload.firstName && payload.lastName) {
                             currentUser.name = `${payload.firstName} ${payload.lastName}`;
                             if (payload.middleName) currentUser.name += ` ${payload.middleName}`;
@@ -1278,7 +2167,6 @@
                 }
             }
 
-            // Обновляем интерфейс
             updateProfileInfo();
             renderRoleSection();
             setupTabs();
@@ -1288,6 +2176,12 @@
         function updateProfileInfo() {
             document.getElementById('profileName').textContent = currentUser.name;
             document.getElementById('profileEmail').textContent = currentUser.email;
+
+            const teamWrapper = document.getElementById('profileTeamWrapper');
+            if (currentUser.role === 'STUDENT' && teamWrapper) {
+                teamWrapper.style.display = 'block';
+                document.getElementById('profileTeam').textContent = studentTeamData.name;
+            }
         }
 
         // ===== ОТОБРАЖЕНИЕ СЕКЦИИ ПО РОЛИ =====
@@ -1295,11 +2189,12 @@
             const adminSection = document.getElementById('adminSection');
             const teacherSection = document.getElementById('teacherSection');
             const clientSection = document.getElementById('clientSection');
+            const studentSection = document.getElementById('studentSection');
 
-            // Скрываем все секции
             adminSection.style.display = 'none';
             teacherSection.style.display = 'none';
             clientSection.style.display = 'none';
+            studentSection.style.display = 'none';
 
             if (currentUser.role === 'ADMINISTRATOR') {
                 adminSection.style.display = 'block';
@@ -1315,6 +2210,13 @@
                 setupClientTabs();
                 renderClientProjects();
                 renderClientNotifications();
+            } else if (currentUser.role === 'STUDENT') {
+                studentSection.style.display = 'block';
+                setupStudentTabs();
+                renderStudentProjects();
+                renderTeamParticipants();
+                renderTeamProjects();
+                renderStudentNotifications();
             } else {
                 alert('Интерфейс для вашей роли в разработке');
             }
@@ -1371,55 +2273,163 @@
             });
         }
 
-        // ===== ДРОПДАУНЫ (АДМИН) =====
+        // ===== ВКЛАДКИ СТУДЕНТА =====
+        function setupStudentTabs() {
+            const tabButtons = document.querySelectorAll('#studentSection .tab-button');
+            const tabContents = document.querySelectorAll('#studentSection .tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    button.classList.add('active');
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+        }
+
+        // ===== ФИЛЬТРЫ АДМИНИСТРАТОРА =====
         function toggleDropdown(dropdownId, btn) {
             const dropdown = document.getElementById(dropdownId);
             const isOpen = dropdown.classList.contains('show');
             document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-select').forEach(b => b.classList.remove('active'));
             if (!isOpen) {
                 dropdown.classList.add('show');
                 btn.classList.add('active');
             }
         }
 
-        function selectOption(dropdownId, labelId, value) {
-            document.getElementById(labelId).textContent = value;
-            document.getElementById(dropdownId).classList.remove('show');
-            const btn = document.querySelector(`button[onclick*="${dropdownId}"]`);
-            if (btn) btn.classList.remove('active');
+        function selectAdminFilter(type, value, checkbox) {
+            const isChecked = checkbox.checked;
+            const label = checkbox.closest('.dropdown-item');
+
+            if (isChecked) {
+                if (!adminFilters[type].includes(value)) {
+                    adminFilters[type].push(value);
+                }
+                if (label) label.classList.add('selected');
+            } else {
+                adminFilters[type] = adminFilters[type].filter(v => v !== value);
+                if (label) label.classList.remove('selected');
+            }
+
+            // Обновляем счётчик
+            const labelId = `label-${type}`;
+            const labelEl = document.getElementById(labelId);
+            const count = adminFilters[type].length;
+            if (labelEl) {
+                labelEl.setAttribute('data-count', count);
+                const baseName = labelEl.textContent.replace(/\s*\(\d+\)$/, '');
+                labelEl.textContent = baseName;
+                if (count > 0) labelEl.setAttribute('data-count', count);
+            }
+
+            renderProjects();
         }
 
-        // ===== ДРОПДАУНЫ (ПРЕПОДАВАТЕЛЬ) =====
+        function resetAdminFilters() {
+            adminFilters = { type: [], dept: [], team: [], status: [] };
+            adminSearchQuery = '';
+
+            // Сбрасываем счётчики
+            ['type', 'dept', 'team', 'status'].forEach(type => {
+                const label = document.getElementById(`label-${type}`);
+                if (label) label.setAttribute('data-count', '0');
+            });
+
+            // Сбрасываем чекбоксы
+            document.querySelectorAll('#adminSection .dropdown-item').forEach(label => {
+                const cb = label.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = false;
+                label.classList.remove('selected');
+            });
+
+            // Сбрасываем поиск
+            const searchInput = document.getElementById('adminSearchInput');
+            if (searchInput) searchInput.value = '';
+
+            renderProjects();
+        }
+
+        function handleAdminSearch() {
+            adminSearchQuery = document.getElementById('adminSearchInput').value.toLowerCase();
+            renderProjects();
+        }
+
+        // ===== ФИЛЬТРЫ ПРЕПОДАВАТЕЛЯ =====
         function toggleFilter(type) {
             const dropdown = document.getElementById(`dropdown-${type}`);
             const btn = dropdown.previousElementSibling;
             const isOpen = dropdown.classList.contains('show');
-            closeAllDropdowns();
+            closeAllTeacherDropdowns();
             if (!isOpen) {
                 dropdown.classList.add('show');
                 btn.classList.add('active');
             }
         }
 
-        function closeAllDropdowns() {
-            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        function closeAllTeacherDropdowns() {
+            document.querySelectorAll('#teacherSection .dropdown').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('#teacherSection .filter-select').forEach(b => b.classList.remove('active'));
         }
 
-        function applyFilter(type, value, label) {
-            activeFilters[type] = value;
-            document.getElementById(`label-${type}`).textContent = label;
-            closeAllDropdowns();
+        function selectFilter(type, value, checkbox) {
+            const isChecked = checkbox.checked;
+            const label = checkbox.closest('.dropdown-item');
+            if (isChecked) {
+                if (!teacherFilters[type].includes(value)) {
+                    teacherFilters[type].push(value);
+                }
+                if (label) label.classList.add('selected');
+            } else {
+                teacherFilters[type] = teacherFilters[type].filter(v => v !== value);
+                if (label) label.classList.remove('selected');
+            }
+            // Обновляем счётчик
+            const labelId = `label-${type}`;
+            const labelEl = document.getElementById(labelId);
+            const count = teacherFilters[type].length;
+            if (labelEl) {
+                labelEl.setAttribute('data-count', count);
+                const baseName = labelEl.textContent.replace(/\s*\(\d+\)$/, '');
+                labelEl.textContent = baseName;
+                if (count > 0) labelEl.setAttribute('data-count', count);
+            }
+            renderTeacherProjects();
+        }
+
+        function resetTeacherFilters() {
+            teacherFilters = { type: [], dept: [], team: [], status: [] };
+            teacherSearchQuery = '';
+
+            // Сбрасываем счётчики
+            ['type', 'dept', 'team', 'status'].forEach(type => {
+                const label = document.getElementById(`label-${type}`);
+                if (label) label.setAttribute('data-count', '0');
+            });
+
+            // Сбрасываем чекбоксы
+            document.querySelectorAll('#teacherSection .dropdown-item').forEach(label => {
+                const cb = label.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = false;
+                label.classList.remove('selected');
+            });
+
+            // Сбрасываем поиск
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = '';
+
             renderTeacherProjects();
         }
 
         function handleSearch() {
-            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            teacherSearchQuery = document.getElementById('searchInput').value.toLowerCase();
             renderTeacherProjects();
         }
 
-        // ===== ДРОПДАУНЫ (ЗАКАЗЧИК) =====
+        // ===== ФИЛЬТРЫ ЗАКАЗЧИКА =====
         function toggleClientFilter(type) {
             const dropdown = document.getElementById(`dropdown-${type}`);
             const btn = dropdown.previousElementSibling;
@@ -1432,14 +2442,59 @@
         }
 
         function closeAllClientDropdowns() {
-            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#clientSection .dropdown').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('#clientSection .filter-select').forEach(b => b.classList.remove('active'));
         }
 
-        function applyClientFilter(type, value, label) {
-            clientActiveFilters[type] = value;
-            document.getElementById(`label-${type}`).textContent = label;
-            closeAllClientDropdowns();
+        function selectClientFilter(type, value, checkbox) {
+            const isChecked = checkbox.checked;
+            const label = checkbox.closest('.dropdown-item');
+
+            if (isChecked) {
+                if (!clientFilters[type].includes(value)) {
+                    clientFilters[type].push(value);
+                }
+                if (label) label.classList.add('selected');
+            } else {
+                clientFilters[type] = clientFilters[type].filter(v => v !== value);
+                if (label) label.classList.remove('selected');
+            }
+
+            // Обновляем счётчик
+            const labelId = `label-${type}`;
+            const labelEl = document.getElementById(labelId);
+            const count = clientFilters[type].length;
+            if (labelEl) {
+                labelEl.setAttribute('data-count', count);
+                const baseName = labelEl.textContent.replace(/\s*\(\d+\)$/, '');
+                labelEl.textContent = baseName;
+                if (count > 0) labelEl.setAttribute('data-count', count);
+            }
+
+            renderClientProjects();
+        }
+
+        function resetClientFilters() {
+            clientFilters = { type: [], dept: [], status: [] };
+            clientSearchQuery = '';
+
+            // Сбрасываем счётчики
+            ['type', 'dept', 'status'].forEach(type => {
+                const label = document.getElementById(`label-${type}`);
+                if (label) label.setAttribute('data-count', '0');
+            });
+
+            // Сбрасываем чекбоксы
+            document.querySelectorAll('#clientSection .dropdown-item').forEach(label => {
+                const cb = label.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = false;
+                label.classList.remove('selected');
+            });
+
+            // Сбрасываем поиск
+            const searchInput = document.getElementById('clientSearchInput');
+            if (searchInput) searchInput.value = '';
+
             renderClientProjects();
         }
 
@@ -1448,23 +2503,171 @@
             renderClientProjects();
         }
 
+        // ===== ФИЛЬТРЫ СТУДЕНТА =====
+        function toggleStudentFilter(type, btn) {
+            const dropdown = document.getElementById(`student-dropdown-${type}`);
+            const isOpen = dropdown.classList.contains('show');
+            document.querySelectorAll('#studentSection .dropdown').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('#studentSection .filter-select').forEach(b => b.classList.remove('active'));
+            if (!isOpen) {
+                dropdown.classList.add('show');
+                btn.classList.add('active');
+            }
+        }
+
+        function selectStudentFilter(type, value, checkbox) {
+            const isChecked = checkbox.checked;
+            const label = checkbox.closest('.dropdown-item');
+
+            if (isChecked) {
+                if (!studentFilters[type].includes(value)) {
+                    studentFilters[type].push(value);
+                }
+                if (label) label.classList.add('selected');
+            } else {
+                studentFilters[type] = studentFilters[type].filter(v => v !== value);
+                if (label) label.classList.remove('selected');
+            }
+
+            // Обновляем счётчик
+            const labelId = `student-label-${type}`;
+            const labelEl = document.getElementById(labelId);
+            const count = studentFilters[type].length;
+            if (labelEl) {
+                labelEl.setAttribute('data-count', count);
+                const baseName = labelEl.textContent.replace(/\s*\(\d+\)$/, '');
+                labelEl.textContent = baseName;
+                if (count > 0) labelEl.setAttribute('data-count', count);
+            }
+
+            renderStudentProjects();
+        }
+
+        function resetStudentFilters() {
+            studentFilters = { type: [], dept: [] };
+            studentSearchQuery = '';
+
+            // Сбрасываем счётчики
+            ['type', 'dept'].forEach(type => {
+                const label = document.getElementById(`student-label-${type}`);
+                if (label) label.setAttribute('data-count', '0');
+            });
+
+            // Сбрасываем чекбоксы
+            document.querySelectorAll('#student-dropdown-type .dropdown-item, #student-dropdown-dept .dropdown-item').forEach(label => {
+                const cb = label.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = false;
+                label.classList.remove('selected');
+            });
+
+            // Сбрасываем поиск
+            const searchInput = document.getElementById('studentSearchInput');
+            if (searchInput) searchInput.value = '';
+
+            renderStudentProjects();
+        }
+
+        function handleStudentSearch() {
+            studentSearchQuery = document.getElementById('studentSearchInput').value.toLowerCase();
+            renderStudentProjects();
+        }
+
+        // ===== ФИЛЬТРЫ КОМАНДЫ =====
+        function toggleTeamFilter(type, btn) {
+            const dropdown = document.getElementById(`team-dropdown-${type}`);
+            const isOpen = dropdown.classList.contains('show');
+            document.querySelectorAll('.team-dropdown-menu').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.team-filter-btn').forEach(b => b.classList.remove('active'));
+            if (!isOpen) {
+                dropdown.classList.add('show');
+                btn.classList.add('active');
+            }
+        }
+
+        function selectTeamFilter(type, value, checkbox) {
+            const isChecked = checkbox.checked;
+            const label = checkbox.closest('label');
+
+            if (isChecked) {
+                if (!teamFilters[type].includes(value)) {
+                    teamFilters[type].push(value);
+                }
+                if (label) label.classList.add('selected');
+            } else {
+                teamFilters[type] = teamFilters[type].filter(v => v !== value);
+                if (label) label.classList.remove('selected');
+            }
+
+            // Обновляем счётчик
+            const labelId = `team-label-${type}`;
+            const labelEl = document.getElementById(labelId);
+            const count = teamFilters[type].length;
+            if (labelEl) {
+                labelEl.setAttribute('data-count', count);
+                const baseName = labelEl.textContent.replace(/\s*\(\d+\)$/, '');
+                labelEl.textContent = baseName;
+                if (count > 0) labelEl.setAttribute('data-count', count);
+            }
+
+            renderTeamProjects();
+        }
+
+        function resetTeamFilters() {
+            teamFilters = { type: [], dept: [] };
+            teamSearchQuery = '';
+
+            // Сбрасываем счётчики
+            ['type', 'dept'].forEach(type => {
+                const label = document.getElementById(`team-label-${type}`);
+                if (label) label.setAttribute('data-count', '0');
+            });
+
+            // Сбрасываем чекбоксы
+            document.querySelectorAll('#team-dropdown-type label, #team-dropdown-dept label').forEach(label => {
+                const cb = label.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = false;
+                label.classList.remove('selected');
+            });
+
+            // Сбрасываем поиск
+            const searchInput = document.getElementById('teamSearchInput');
+            if (searchInput) searchInput.value = '';
+
+            renderTeamProjects();
+        }
+
+        function handleTeamSearch() {
+            teamSearchQuery = document.getElementById('teamSearchInput').value.toLowerCase();
+            renderTeamProjects();
+        }
+
         // ===== РЕНДЕРИНГ АДМИНА =====
-        function renderUsers() {
-            const tbody = document.getElementById('usersTableBody');
-            const container = document.querySelector('.users-white-container');
-            const empty = document.getElementById('empty-users');
-            if (!tbody || !empty) return;
-            tbody.innerHTML = '';
-            if (usersData.length === 0) {
-                if (container) container.style.display = 'none';
+        function renderProjects() {
+            const grid = document.getElementById('projectsGrid');
+            const empty = document.getElementById('empty-projects');
+            if (!grid || !empty) return;
+            grid.innerHTML = '';
+
+            const filtered = projectsData.filter(p => {
+                return (adminFilters.type.length === 0 || adminFilters.type.includes(p.type)) &&
+                    (adminFilters.dept.length === 0 || adminFilters.dept.includes(p.department)) &&
+                    (adminFilters.team.length === 0 || adminFilters.team.includes(p.team)) &&
+                    (adminFilters.status.length === 0 || adminFilters.status.includes(p.status)) &&
+                    (!adminSearchQuery || p.title.toLowerCase().includes(adminSearchQuery));
+            });
+
+            if (filtered.length === 0) {
                 empty.classList.add('visible');
             } else {
-                if (container) container.style.display = 'block';
                 empty.classList.remove('visible');
-                usersData.forEach(u => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${u.role}</td><td>${u.fio}</td><td>${u.login}</td><td>${u.group || 'нет'}</td>`;
-                    tbody.appendChild(tr);
+                filtered.forEach(p => {
+                    let statusClass = p.status === 'free' ? 'free' : (p.status === 'completed' ? 'completed' : 'verification');
+                    let statusText = p.status === 'free' ? 'свободно' : (p.status === 'completed' ? 'завершен' : 'НА ВЕРИФИКАЦИИ');
+                    let btnText = p.status === 'verification' ? 'Требует подтверждения' : 'Подробнее';
+                    const div = document.createElement('div');
+                    div.className = 'project-card';
+                    div.innerHTML = `<div class="project-title">${p.title}</div><div class="project-status ${statusClass}">Статус: ${statusText}</div><div class="project-info"><strong>Команда:</strong> ${p.team}</div><div class="project-info"><strong>Кафедра:</strong> ${p.department}</div><div class="project-goal"><strong>Цель:</strong> ${p.goal}</div><button class="project-button">${btnText}</button>`;
+                    grid.appendChild(div);
                 });
             }
         }
@@ -1490,27 +2693,6 @@
         function toggleGroupFavorite(index) {
             groupsData[index].isFavorite = !groupsData[index].isFavorite;
             renderGroups();
-        }
-
-        function renderProjects() {
-            const grid = document.getElementById('projectsGrid');
-            const empty = document.getElementById('empty-projects');
-            if (!grid || !empty) return;
-            grid.innerHTML = '';
-            if (projectsData.length === 0) {
-                empty.classList.add('visible');
-            } else {
-                empty.classList.remove('visible');
-                projectsData.forEach(p => {
-                    let statusClass = p.status === 'free' ? 'free' : (p.status === 'completed' ? 'completed' : 'verification');
-                    let statusText = p.status === 'free' ? 'свободно' : (p.status === 'completed' ? 'завершен' : 'НА ВЕРИФИКАЦИИ');
-                    let btnText = p.status === 'verification' ? 'Требует подтверждения' : 'Подробнее';
-                    const div = document.createElement('div');
-                    div.className = 'project-card';
-                    div.innerHTML = `<div class="project-title">${p.title}</div><div class="project-status ${statusClass}">Статус: ${statusText}</div><div class="project-info"><strong>Команда:</strong> ${p.team}</div><div class="project-info"><strong>Кафедра:</strong> ${p.department}</div><div class="project-goal"><strong>Цель:</strong> ${p.goal}</div><button class="project-button">${btnText}</button>`;
-                    grid.appendChild(div);
-                });
-            }
         }
 
         async function loadDataFromBackend() {
@@ -1543,11 +2725,11 @@
         function renderTeacherProjects() {
             const grid = document.getElementById('projectsGridTeacher');
             const filtered = teacherProjectsData.filter(p => {
-                return (!activeFilters.type || p.type === activeFilters.type) &&
-                    (!activeFilters.dept || p.dept === activeFilters.dept) &&
-                    (!activeFilters.team || p.team === activeFilters.team) &&
-                    (!activeFilters.status || p.status === activeFilters.status) &&
-                    (!searchQuery || p.title.toLowerCase().includes(searchQuery));
+                return (teacherFilters.type.length === 0 || teacherFilters.type.includes(p.type)) &&
+                    (teacherFilters.dept.length === 0 || teacherFilters.dept.includes(p.dept)) &&
+                    (teacherFilters.team.length === 0 || teacherFilters.team.includes(p.team)) &&
+                    (teacherFilters.status.length === 0 || teacherFilters.status.includes(p.status)) &&
+                    (!teacherSearchQuery || p.title.toLowerCase().includes(teacherSearchQuery));
             });
 
             if (filtered.length === 0) {
@@ -1619,9 +2801,9 @@
         function renderClientProjects() {
             const grid = document.getElementById('projectsGridClient');
             const filtered = clientProjectsData.filter(p => {
-                return (!clientActiveFilters.type || p.type === clientActiveFilters.type) &&
-                    (!clientActiveFilters.dept || p.dept === clientActiveFilters.dept) &&
-                    (!clientActiveFilters.status || p.status === clientActiveFilters.status) &&
+                return (clientFilters.type.length === 0 || clientFilters.type.includes(p.type)) &&
+                    (clientFilters.dept.length === 0 || clientFilters.dept.includes(p.dept)) &&
+                    (clientFilters.status.length === 0 || clientFilters.status.includes(p.status)) &&
                     (!clientSearchQuery || p.title.toLowerCase().includes(clientSearchQuery));
             });
 
@@ -1662,6 +2844,101 @@
                     </div>
                 `).join('');
             }
+        }
+
+        // ===== РЕНДЕРИНГ СТУДЕНТА =====
+        function renderStudentProjects() {
+            const grid = document.getElementById('projectsGridStudent');
+            const filtered = studentProjectsData.filter(p => {
+                return (studentFilters.type.length === 0 || studentFilters.type.includes(p.type)) &&
+                    (studentFilters.dept.length === 0 || studentFilters.dept.includes(p.dept)) &&
+                    (!studentSearchQuery || p.title.toLowerCase().includes(studentSearchQuery));
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state-student"><div class="empty-text-student">ИСТОРИЯ ПУСТА</div></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(project => {
+                const statusClass = project.status === 'в работе' ? 'in-work' :
+                    project.status === 'завершен' ? 'completed' : 'rejected';
+
+                return `
+                <div class="project-card-student">
+                    <div class="project-title-student">${project.title}</div>
+                    <div class="project-status-student ${statusClass}">Статус: ${project.status}</div>
+                    <div class="project-info-student"><strong>Кафедра:</strong> ${project.dept}</div>
+                    <div class="project-goal-student"><strong>Цель:</strong> ${project.goal}</div>
+                    <button class="project-button-student">Подробнее</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderTeamParticipants() {
+            const list = document.getElementById('participantsList');
+            list.innerHTML = studentTeamData.members.map(m => `
+                <li class="participant-item">
+                    ${m.isLeader ? '<span class="leader-star">★</span>' : '<span style="width:16px"></span>'}
+                    <span>${m.name}</span>
+                </li>
+            `).join('');
+        }
+
+        function renderTeamProjects() {
+            const grid = document.getElementById('teamProjectsGrid');
+            const filtered = studentTeamData.projects.filter(p => {
+                return (teamFilters.type.length === 0 || teamFilters.type.includes(p.type)) &&
+                    (teamFilters.dept.length === 0 || teamFilters.dept.includes(p.dept)) &&
+                    (!teamSearchQuery || p.title.toLowerCase().includes(teamSearchQuery));
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state-student"><div class="empty-text-student">ПРОЕКТОВ НЕТ</div></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(project => {
+                const statusClass = project.status === 'в работе' ? 'in-work' :
+                    project.status === 'завершен' ? 'completed' : 'rejected';
+
+                return `
+                <div class="project-card-student">
+                    <div class="project-title-student">${project.title}</div>
+                    <div class="project-status-student ${statusClass}">Статус: ${project.status}</div>
+                    <div class="project-info-student"><strong>Кафедра:</strong> ${project.dept}</div>
+                    <div class="project-info-student"><strong>Тип:</strong> ${project.type}</div>
+                    <div class="project-goal-student"><strong>Цель:</strong> ${project.goal}</div>
+                    <button class="project-button-student">Подробнее</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderStudentNotifications() {
+            const container = document.getElementById('notificationsListStudent');
+
+            if (studentNotificationsData.length === 0) {
+                container.innerHTML = '<div class="empty-state-student"><div class="empty-text-student">НЕТ УВЕДОМЛЕНИЙ</div></div>';
+                return;
+            }
+
+            container.innerHTML = studentNotificationsData.map(n => `
+                <div class="notification-item-student">
+                    <div class="notification-icon-student"></div>
+                    <div class="notification-content-student">
+                        <div class="notification-text-student">${n.text}</div>
+                        ${n.hasActions ? `
+                        <div class="notification-actions">
+                            <button class="notification-btn reject">${n.rejectText}</button>
+                            <button class="notification-btn accept">${n.acceptText}</button>
+                        </div>
+                        ` : ''}
+                        <div class="notification-time-student">${n.time}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // ===== МОДАЛЬНОЕ ОКНО ЗАКАЗЧИКА =====
@@ -1706,9 +2983,9 @@
 
         // Закрытие дропдаунов при клике вне
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.filter-wrapper') && !e.target.closest('.filter-dropdown')) {
-                document.querySelectorAll('.dropdown, .dropdown-menu').forEach(d => d.classList.remove('show'));
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (!e.target.closest('.filter-wrapper') && !e.target.closest('.team-filter-dropdown')) {
+                document.querySelectorAll('.dropdown, .team-dropdown-menu').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.filter-select, .team-filter-btn').forEach(b => b.classList.remove('active'));
             }
         });
     </script>

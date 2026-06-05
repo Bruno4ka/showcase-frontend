@@ -93,15 +93,21 @@
                         </svg>
                     </button>
                     <div class="dropdown" id="dropdown-type">
-                        <div class="dropdown-item"
-                            onclick="selectFilter('dropdown-type', 'label-type', 'Исследовательский')">Исследовательский
-                        </div>
-                        <div class="dropdown-item"
-                            onclick="selectFilter('dropdown-type', 'label-type', 'Практический')">Практический</div>
-                        <div class="dropdown-item" onclick="selectFilter('dropdown-type', 'label-type', 'Учебный')">
-                            Учебный</div>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-type', 'Исследовательский', this)">
+                            Исследовательский
+                        </label>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-type', 'Практический', this)">
+                            Практический
+                        </label>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-type', 'Учебный', this)">
+                            Учебный
+                        </label>
                     </div>
                 </div>
+
                 <div class="filter-wrapper">
                     <button class="filter-select" onclick="toggleFilter('dropdown-dept', this)">
                         <span id="label-dept">Кафедра</span>
@@ -110,16 +116,26 @@
                         </svg>
                     </button>
                     <div class="dropdown" id="dropdown-dept">
-                        <div class="dropdown-item" onclick="selectFilter('dropdown-dept', 'label-dept', 'УТБиИС')">
-                            УТБиИС</div>
-                        <div class="dropdown-item" onclick="selectFilter('dropdown-dept', 'label-dept', 'ЛТСТ')">ЛТСТ
-                        </div>
-                        <div class="dropdown-item" onclick="selectFilter('dropdown-dept', 'label-dept', 'УЭРиБТ')">
-                            УЭРиБТ</div>
-                        <div class="dropdown-item" onclick="selectFilter('dropdown-dept', 'label-dept', 'ХиИЭ')">ХиИЭ
-                        </div>
-                        <div class="dropdown-item" onclick="selectFilter('dropdown-dept', 'label-dept', 'ЦТУТП')">ЦТУТП
-                        </div>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-dept', 'ИиВТ', this)">
+                            ИиВТ
+                        </label>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-dept', 'ВССиИБ', this)">
+                            ВССиИБ
+                        </label>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-dept', 'УЭРиБТ', this)">
+                            УЭРиБТ
+                        </label>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-dept', 'ХиИЭ', this)">
+                            ХиИЭ
+                        </label>
+                        <label class="dropdown-item">
+                            <input type="checkbox" onchange="selectFilter('dropdown-dept', 'ЦТУТП', this)">
+                            ЦТУТП
+                        </label>
                     </div>
                 </div>
             </div>

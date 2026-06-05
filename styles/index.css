@@ -224,20 +224,27 @@ body {
 .filter-select {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     border-radius: 8px;
-    padding: 8px 14px;
+    padding: 10px 16px;
     color: #fff;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
-    background: none;
-    border: none;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid transparent;
+    white-space: nowrap;
 }
 
 .filter-select:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.filter-select.active {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .filter-select svg {
@@ -253,16 +260,27 @@ body {
 
 .dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     left: 0;
-    margin-top: 8px;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    padding: 8px 0;
-    min-width: 200px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    padding: 8px;
+    min-width: 220px;
     display: none;
-    z-index: 100;
+    z-index: 1000;
+    animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dropdown.show {
@@ -270,15 +288,178 @@ body {
 }
 
 .dropdown-item {
-    padding: 10px 16px;
-    font-size: 14px;
-    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    user-select: none;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    color: #000000;
+    background-color: #ffffff;
 }
 
 .dropdown-item:hover {
-    background-color: #f0f4f8;
+    background-color: #f0f0f0;
+    color: #000000;
+}
+
+.dropdown-item.selected {
+    background: #e3f0ff;
+    font-weight: 600;
+}
+
+.dropdown-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #1B5AB9;
+    border-radius: 5px;
+    display: inline-block;
+    position: relative;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    background: white;
+}
+
+.dropdown-item input:checked + .checkbox-custom {
+    background: #1B5AB9;
+    border-color: #1B5AB9;
+}
+
+.dropdown-item input:checked + .checkbox-custom::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.dropdown-item-text {
+    flex: 1;
+    font-size: 14px;
+    color: #1A365D;
+    font-weight: 500;
+}
+
+.dropdown-item.selected .dropdown-item-text {
+    color: #1B5AB9;
+    font-weight: 600;
+}
+
+/* Счётчик выбранных */
+#label-type::after,
+#label-dept::after {
+    content: '';
+    margin-left: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+#label-type[data-count]:not([data-count="0"])::after,
+#label-dept[data-count]:not([data-count="0"])::after {
+    content: attr(data-count);
+}
+
+/* Кнопка сброса */
+.btn-reset-filters {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.btn-reset-filters:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+.btn-reset-filters:active {
+    transform: translateY(0);
+}
+
+.btn-reset-filters svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* Mobile styles for filters */
+@media (max-width: 376px) {
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 15px;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .filters-left {
+        display: flex;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .filter-wrapper {
+        flex: 1;
+    }
+
+    .filter-select {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 12px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+
+    .filter-select svg {
+        width: 10px;
+        height: 10px;
+    }
+
+    .dropdown {
+        width: 100%;
+        left: 0;
+        min-width: auto;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .dropdown-item {
+        padding: 12px;
+    }
+
+    .btn-reset-filters {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .search-box {
@@ -335,6 +516,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -413,9 +595,9 @@ body {
 }
 
 .load-more-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 24px 0 32px;
+    display: flex;
+    justify-content: center;
+    padding: 24px 0 32px;
 }
 
 .pagination-container {
@@ -431,7 +613,8 @@ body {
     font-weight: 500;
     font-family: inherit;
     background: #ffffff;
-    color: #1B5AB9;;
+    color: #1B5AB9;
+    ;
     border: none;
     border-radius: 40px;
     cursor: pointer;
